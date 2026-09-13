@@ -38,10 +38,15 @@ build/baseline.txt build/injected.txt: build/Harness.app/Harness build/fanqieheh
 	cp "$$CONT/harness-result.txt" build/injected.txt; cat build/injected.txt
 
 packages/screenshot-injected.png: build/injected.txt
+	@mkdir -p packages
+	@xcrun simctl bootstatus "$(SIM)" -b
 	@xcrun simctl launch --terminate-running-process "$(SIM)" $(APP_ID)
-	@sleep 3
-	@xcrun simctl io "$(SIM)" screenshot $@
+	@sleep 5
+	@for i in 1 2 3; do \
+		xcrun simctl io "$(SIM)" screenshot $@ && break || sleep 3; \
+	done
 	@xcrun simctl terminate "$(SIM)" $(APP_ID) 2>/dev/null || true
+	@test -s $@ && echo "SCREENSHOT-OK: $@"
 	@cp $@ packages/result-screenshot.ipa
 	@echo "== 产物 ==" && ls -la packages/
 
