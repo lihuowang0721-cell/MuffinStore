@@ -55,23 +55,11 @@ build/fanqiehehe-sim.dylib: Tweak-sim.x substrate_shim.mm
 		build/Tweak-sim.mm substrate_shim.mm -o $@
 	@codesign -f -s - $@ && echo DYLIB-SIGNED
 
-build/Harness.app/Harness: test_host_sim.m
+build/Harness.app/Harness: test_host_sim.m Info-Harness.plist
 	@mkdir -p build/Harness.app
 	@echo "== 编译测试宿主 App =="
 	@xcrun -sdk iphonesimulator clang -arch arm64 -framework Foundation -framework UIKit \
 		-fobjc-arc test_host_sim.m -o $@
-	@printf '<?xml version="1.0" encoding="UTF-8"?>\n\
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n\
-<plist version="1.0"><dict>\
-<key>CFBundleIdentifier</key><string>$(APP_ID)</string>\
-<key>CFBundleName</key><string>Harness</string>\
-<key>CFBundleExecutable</key><string>Harness</string>\
-<key>CFBundleShortVersionString</key><string>1.0</string>\
-<key>CFBundleVersion</key><string>1</string>\
-<key>CFBundlePackageType</key><string>APPL</string>\
-<key>LSRequiresIPhoneOS</key><true/>\
-<key>UIDeviceFamily</key><array><integer>1</integer></array>\
-<key>MinimumOSVersion</key><string>17.0</string>\
-<key>UILaunchScreen</key><dict/>\
-</dict></plist>\n' > build/Harness.app/Info.plist
+	@cp Info-Harness.plist build/Harness.app/Info.plist
+	@plutil -lint build/Harness.app/Info.plist
 	@codesign -f -s - build/Harness.app && echo APP-SIGNED
