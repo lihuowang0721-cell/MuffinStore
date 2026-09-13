@@ -51,9 +51,8 @@ build/fanqiehehe-sim.dylib: Tweak-sim.x substrate_shim.mm
 	@perl "$${THEOS:-$$HOME/theos}/vendor/logos/bin/logos.pl" Tweak-sim.x > build/Tweak-sim.mm
 	@echo "== 编译 hook dylib（iphonesimulator SDK, arm64）=="
 	@xcrun -sdk iphonesimulator clang++ -arch arm64 -dynamiclib -framework Foundation \
-		-fobjc-arc -include substrate_shim.mm \
-		-I"$${THEOS:-$$HOME/theos}/vendor/include" \
-		build/Tweak-sim.mm -o $@
+		-fobjc-arc -Ishim-include \
+		build/Tweak-sim.mm substrate_shim.mm -o $@
 	@codesign -f -s - $@ && echo DYLIB-SIGNED
 
 build/Harness.app/Harness: test_host_sim.m
