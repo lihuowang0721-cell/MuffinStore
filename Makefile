@@ -40,7 +40,9 @@ build/baseline.txt build/injected.txt: build/Harness.app/Harness build/fanqieheh
 packages/screenshot-injected.png: build/injected.txt
 	@mkdir -p packages
 	@xcrun simctl bootstatus "$(SIM)" -b
-	@xcrun simctl launch --terminate-running-process "$(SIM)" $(APP_ID)
+	@DYLIB_ABS=$$(pwd)/build/fanqiehehe-sim.dylib; \
+	SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="$$DYLIB_ABS" \
+	xcrun simctl launch --terminate-running-process "$(SIM)" $(APP_ID)
 	@sleep 5
 	@for i in 1 2 3; do \
 		xcrun simctl io "$(SIM)" screenshot $@ && break || sleep 3; \
